@@ -6,4 +6,4 @@ from typing import Dict, Any, Optional, Union, List, Set, Hashable, Literal, Tup
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
 from sklearn.config import set_config
-set_config(transform_output="pandas")  # forces built-in transformers to output df
+set_config(transform_output="pandas")
