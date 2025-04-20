@@ -325,6 +325,58 @@ class CustomDropColumnsTransformer(BaseEstimator, TransformerMixin):
           #self.fit(X, y)
           return self.transform(X)
 
+class CustomSigma3Transformer(BaseEstimator, TransformerMixin):
+    """
+    A transformer that applies 3-sigma clipping to a specified column in a pandas DataFrame.
+
+    This transformer follows the scikit-learn transformer interface and can be used in
+    a scikit-learn pipeline. It clips values in the target column to be within three standard
+    deviations from the mean.
+
+    Parameters
+    ----------
+    target_column : Hashable
+        The name of the column to apply 3-sigma clipping on.
+
+    Attributes
+    ----------
+    high_wall : Optional[float]
+        The upper bound for clipping, computed as mean + 3 * standard deviation.
+    low_wall : Optional[float]
+        The lower bound for clipping, computed as mean - 3 * standard deviation.
+    """
+    def __init__(self, target_column: Hashable) -> None:
+        self.target_column = target_column
+        self.low_wall = None
+        self.high_wall = None
+
+    def fit(self, X: pd.DataFrame, y: Optional[pd.Series] = None):
+      if self.target_column not in X.columns:
+        raise ValueError(f"Column '{self.target_column}' not found in input DataFrame.")
+      # Compute the mean and standard deviation of the column
+      mean = X[self.target_column].mean()
+      sigma = X[self.target_column].std()
+
+      # Compute the low and high boundaries
+      self.low_wall = mean - 3 * sigma
+      self.high_wall = mean + 3 * sigma
+      return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+      if self.low_wall is None or self.high_wall is None:
+        raise AssertionError("Sigma3Transformer.fit has not been called.")
+      
+      X = X.copy()  # Avoid modifying original DataFrame
+      X[self.target_column] = X[self.target_column].clip(lower=self.low_wall, upper=self.high_wall)
+      return X      
+
+    def fit_transform(self, X: pd.DataFrame, y: Optional[Iterable] = None) -> pd.DataFrame:
+      """
+      Fit and transform the data
+      """
+      self.fit(X, y)
+      return self.transform(X)
+
 titanic_transformer = Pipeline(steps=[
     ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
