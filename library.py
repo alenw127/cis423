@@ -436,7 +436,7 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
         if self.inner_low is None or self.inner_high is None or self.outer_low is None or self.outer_high is None:
             raise AssertionError("TukeyTransformer.fit has not been called.")
 
-        X = X.copy() 
+        X = X.copy()
         if self.fence == 'inner':
             X[self.target_column] = X[self.target_column].clip(lower=self.inner_low, upper=self.inner_high)
         elif self.fence == 'outer':
@@ -448,7 +448,7 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
     def fit_transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
         self.fit(X, y)
         return self.transform(X)
-
+        
 titanic_transformer = Pipeline(steps=[
     ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
