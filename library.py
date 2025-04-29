@@ -551,11 +551,13 @@ titanic_transformer = Pipeline(steps=[
     ], verbose=True)
 
 customer_transformer = Pipeline(steps=[
-    #fill in the steps on your own
     ('drop', CustomDropColumnsTransformer(['ID'], 'drop')),
     ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('Experience Level', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high': 2})),
     ('os', CustomOHETransformer('OS')),
     ('isp', CustomOHETransformer('ISP')),
     ('time spent', CustomTukeyTransformer('Time Spent', 'inner')),
+    ('robust_time_spent', CustomRobustTransformer('Time Spent')),
+    ('robust_age', CustomRobustTransformer('Age')),
+    ('imputer', CustomKNNTransformer(n_neighbors=5, weights='uniform'))
     ], verbose=True)
