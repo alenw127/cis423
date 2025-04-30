@@ -567,6 +567,12 @@ class CustomKNNTransformer(BaseEstimator, TransformerMixin):
     self.is_fitted = False
 
   def fit(self, X, y=None):
+    if self.n_neighbors > len(X):
+        warnings.warn(
+            f"n_neighbors ({self.n_neighbors}) is greater than the number of samples ({len(X)}). "
+            "This will likely cause an error or produce unreliable imputations."
+        )
+      
     self.knn_imputer.fit(X)
     self.is_fitted = True
     return self
