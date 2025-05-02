@@ -13,6 +13,9 @@ from sklearn.metrics import f1_score
 from sklearn import set_config
 set_config(transform_output="pandas")  #forces built-in transformers to output df
 
+titanic_variance_based_split = 107   #add to your library
+customer_variance_based_split = 113  #add to your library
+
 
 class CustomMappingTransformer(BaseEstimator, TransformerMixin):
     """
