@@ -565,6 +565,87 @@ class CustomKNNTransformer(BaseEstimator, TransformerMixin):
       in this case, closer neighbors of a query point will have a
       greater influence than neighbors which are further away.
   """
+
+  def __init__(self, n_neighbors=4, weights='uniform'):
+    self.n_neighbors = n_neighbors
+    self.weights = weights
+    self.knn_imputer = KNNImputer(n_neighbors=self.n_neighbors, weights=self.weights, add_indicator=False)
+    self.fitted = False
+
+  def fit(self, X, y=None):
+    """Fit the KNN imputer on the provided DataFrame.
+
+    Parameters
+    ----------
+      X : pandas.DataFrame
+          The data used to fit the imputer.
+      y : None
+          Ignored, for compatibility.
+
+    Returns
+    -------
+      self : CustomKNNTransformer
+          Returns the fitted transformer.
+
+    Raises
+    ------
+      AssertionError
+          If input is not a pandas DataFrame.
+    """
+    assert isinstance(X, pd.DataFrame), "CustomKNNTransformer.fit input must be a pandas DataFrame."
+    if self.n_neighbors > len(X):
+      warnings.warn(f"n_neighbors ({self.n_neighbors}) > number of samples ({len(X)}). KNNImputer will use all samples.", UserWarning)
+
+
+    self.knn_imputer.fit(X)
+    self.fitted = True
+    return self
+
+  def transform(self, X):
+    """Impute missing values in the provided DataFrame using the fitted imputer.
+
+    Parameters
+    ----------
+      X : pandas.DataFrame
+          The data to transform.
+
+    Returns
+    -------
+      pandas.DataFrame
+          A DataFrame with missing values imputed.
+
+    Raises
+    ------
+      AssertionError
+          If the transformer has not been fitted.
+          If the input is not a pandas DataFrame.
+        """
+    assert self.fitted, f"NotFittedError: This CustomKNNTransformer instance is not fitted yet. Call 'fit' with appropriate arguments before using this estimator."
+    assert isinstance(X, pd.DataFrame), "CustomKNNTransformer.transform input must be a pandas DataFrame."
+
+    transformed_data = self.knn_imputer.transform(X)
+    return pd.DataFrame(transformed_data, columns=X.columns)
+
+'''
+class CustomKNNTransformer(BaseEstimator, TransformerMixin):
+  """Imputes missing values using KNN.
+
+  This transformer wraps the KNNImputer from scikit-learn and hard-codes
+  add_indicator to be False. It also ensures that the input and output
+  are pandas DataFrames.
+
+  Parameters
+  ----------
+  n_neighbors : int, default=5
+      Number of neighboring samples to use for imputation.
+  weights : {'uniform', 'distance'}, default='uniform'
+      Weight function used in prediction. Possible values:
+      "uniform" : uniform weights. All points in each neighborhood
+      are weighted equally.
+      "distance" : weight points by the inverse of their distance.
+      in this case, closer neighbors of a query point will have a
+      greater influence than neighbors which are further away.
+  """
   #your code below
   def __init__(self, n_neighbors=5, weights='uniform'):
     self.n_neighbors = n_neighbors
@@ -593,7 +674,7 @@ class CustomKNNTransformer(BaseEstimator, TransformerMixin):
   def fit_transform(self, X: pd.DataFrame, y=None):
     self.fit(X)
     return self.transform(X)
-
+'''
 class CustomTargetTransformer(BaseEstimator, TransformerMixin):
     """
     A target encoder that applies smoothing and returns np.nan for unseen categories.
