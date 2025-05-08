@@ -754,32 +754,25 @@ def find_random_state(
 
     return rs_value, Var
 
-
-# first define the pipeline
-# titanic_transformer = Pipeline(steps=[
-#     ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
-#     ('class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
-#     ('joined_ohe', CustomOHETransformer(target_column='Joined')),
-#     ('fare', CustomTukeyTransformer(target_column='Fare', fence='outer')),
-#     ], verbose=True)
-
-
 titanic_transformer = Pipeline(steps=[
     ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('map_class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
-    ('target_joined', CustomTargetTransformer(col='Joined')),
+    ('target_joined', CustomTargetTransformer(col='Joined', smoothing=10)),
     ('tukey_age', CustomTukeyTransformer(target_column='Age', fence='outer')),
     ('tukey_fare', CustomTukeyTransformer(target_column='Fare', fence='outer')),
     ('scale_age', CustomRobustTransformer('Age')),
     ('scale_fare', CustomRobustTransformer('Fare')),
-    ('imputer', CustomKNNTransformer(n_neighbors=5)),
-])
+    ('impute', CustomKNNTransformer(n_neighbors=5)),
+    ], verbose=True)
+
 customer_transformer = Pipeline(steps=[
-    #fill in the steps on your own
-    ('drop', CustomDropColumnsTransformer(['ID'], 'drop')),
-    ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
-    ('experience', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high': 2})),
-    ('os', CustomOHETransformer(target_column='OS')),
-    ('isp', CustomOHETransformer(target_column='ISP')),
-    ('time spent', CustomTukeyTransformer('Time Spent', 'inner')),
+    ('map_os', CustomMappingTransformer('OS', {'Android': 0, 'iOS': 1})),
+    ('target_isp', CustomTargetTransformer(col='ISP')),
+    ('map_level', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high':2})),
+    ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('tukey_age', CustomTukeyTransformer('Age', 'inner')),  #from chapter 4
+    ('tukey_time spent', CustomTukeyTransformer('Time Spent', 'inner')),  #from chapter 4
+    ('scale_age', CustomRobustTransformer('Age')), #from 5
+    ('scale_time spent', CustomRobustTransformer('Time Spent')), #from 5
+    ('impute', CustomKNNTransformer(n_neighbors=5)),
     ], verbose=True)
