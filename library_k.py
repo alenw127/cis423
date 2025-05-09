@@ -2,30 +2,6 @@ from __future__ import annotations  #must be first line in your library!
 import pandas as pd
 import numpy as np
 import types
-import warnings
-from typing import Dict, Any, Optional, Union, List, Set, Hashable, Literal, Tuple, Self, Iterable
-from sklearn.base import BaseEstimator, TransformerMixin
-from sklearn.pipeline import Pipeline
-from sklearn.impute import KNNImputer
-from sklearn.neighbors import KNeighborsClassifier 
-from sklearn.model_selection import train_test_split
-from sklearn.metrics import f1_score
-from sklearn import set_config
-set_config(transform_output="pandas")  #forces built-in transformers to output df
-
-titanic_variance_based_split = 107   #add to your library
-customer_variance_based_split = 113  #add to your library
-
-
-class CustomMappingTransformer(BaseEstimator, TransformerMixin):
-    """
-    A transformer that maps values in a specified column according to a provided dictionary.
-
-    This transformer follows the scikit-learn transformer interface and can be used in
-    a scikit-learn pipeline. It applies value substifrom __future__ import annotations  #must be first line in your library!
-import pandas as pd
-import numpy as np
-import types
 from typing import Dict, Any, Optional, Union, List, Set, Hashable, Literal, Tuple, Self, Iterable
 from sklearn.base import BaseEstimator, TransformerMixin
 from sklearn.pipeline import Pipeline
