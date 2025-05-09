@@ -449,8 +449,8 @@ class CustomTukeyTransformer(BaseEstimator, TransformerMixin):
         elif self.fence == 'outer':
             X[self.target_column] = X[self.target_column].clip(lower=self.outer_low, upper=self.outer_high)
 
-        #X = X.reset_index(drop=True)
-        X = X.reset_index(drop=False)
+        X = X.reset_index(drop=True)
+        #X = X.reset_index(drop=False)
         return X
 
     def fit_transform(self, X: pd.DataFrame, y: Optional[pd.Series] = None) -> pd.DataFrame:
