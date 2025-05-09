@@ -850,7 +850,15 @@ def find_random_state(
     rs_value: int = np.abs(np.array(Var) - mean_f1_ratio).argmin()  # Index of value closest to mean
 
     return rs_value, Var
-        
+
+
+titanic_transformer = Pipeline(steps=[
+    ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
+    #add your new ohe step below
+    ('joined', CustomOHETransformer('Joined')),
+    ], verbose=True)
+"""
 titanic_transformer = Pipeline(steps=[
     ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
     ('map_class', CustomMappingTransformer('Class', {'Crew': 0, 'C3': 1, 'C2': 2, 'C1': 3})),
@@ -861,6 +869,7 @@ titanic_transformer = Pipeline(steps=[
     ('scale_fare', CustomRobustTransformer('Fare')),
     ('impute', CustomKNNTransformer(n_neighbors=5)),
     ], verbose=True)
+    """
 
 customer_transformer = Pipeline(steps=[
     ('map_os', CustomMappingTransformer('OS', {'Android': 0, 'iOS': 1})),
