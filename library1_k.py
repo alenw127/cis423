@@ -770,8 +770,8 @@ customer_transformer = Pipeline(steps=[
     ('target_isp', CustomTargetTransformer(col='ISP')),
     ('map_level', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high':2})),
     ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
-    ('tukey_age', CustomTukeyTransformer('Age', 'inner')),  #from chapter 4
-    ('tukey_time spent', CustomTukeyTransformer('Time Spent', 'inner')),  #from chapter 4
+    ('tukey_age', CustomTukeyTransformer(target_column = 'Age', fence='outer')),  #from chapter 4
+    ('tukey_time spent', CustomTukeyTransformer(target_column = 'Time Spent', fence='outer')),  #from chapter 4
     ('scale_age', CustomRobustTransformer('Age')), #from 5
     ('scale_time spent', CustomRobustTransformer('Time Spent')), #from 5
     ('impute', CustomKNNTransformer(n_neighbors=5)),
