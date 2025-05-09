@@ -858,6 +858,15 @@ titanic_transformer = Pipeline(steps=[
     #add your new ohe step below
     ('joined', CustomOHETransformer('Joined')),
     ], verbose=True)
+
+customer_transformer = Pipeline(steps=[
+    #fill in the steps on your own
+    ('drop', CustomDropColumnsTransformer(['ID'], 'drop')),
+    ('gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
+    ('Experience Level', CustomMappingTransformer('Experience Level', {'low': 0, 'medium': 1, 'high': 2})),
+    ('os', CustomOHETransformer('OS')),
+    ('isp', CustomOHETransformer('ISP'))
+    ], verbose=True)
 """
 titanic_transformer = Pipeline(steps=[
     ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
@@ -869,7 +878,7 @@ titanic_transformer = Pipeline(steps=[
     ('scale_fare', CustomRobustTransformer('Fare')),
     ('impute', CustomKNNTransformer(n_neighbors=5)),
     ], verbose=True)
-    """
+  
 
 customer_transformer = Pipeline(steps=[
     ('map_os', CustomMappingTransformer('OS', {'Android': 0, 'iOS': 1})),
@@ -882,3 +891,4 @@ customer_transformer = Pipeline(steps=[
     ('scale_time spent', CustomRobustTransformer('Time Spent')), #from 5
     ('impute', CustomKNNTransformer(n_neighbors=5)),
     ], verbose=True)
+    """
