@@ -871,16 +871,13 @@ def dataset_setup(original_table, label_column_name:str, the_transformer, rs, ts
 
   return X_train_numpy, X_test_numpy, y_train_numpy, y_test_numpy
 
-#Customer setup
-url = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQPM6PqZXgmAHfRYTcDZseyALRyVwkBtKEo_rtaKq_C7T0jycWxH6QVEzTzJCRA0m8Vz0k68eM9tDm-/pub?output=csv'
-customers_df = pd.read_csv(url)
-customers_trimmed = customers_df.drop(columns='ID')  #this is a useless column which we will drop early
-customers_trimmed = customers_trimmed.drop_duplicates(ignore_index=True)  #get rid of any duplicates
+'''
 def customer_setup(customer_table, transformer=customer_transformer, rs=customer_variance_based_split, ts=.2):
   return dataset_setup(customer_table, 'Rating', transformer, rs, ts)
 
 def titanic_setup(titanic_table, transformer=titanic_transformer, rs=titanic_variance_based_split, ts=.2):
   return dataset_setup(titanic_table, 'Survived', transformer, rs, ts)
+  '''
 
 titanic_transformer = Pipeline(steps=[
     ('map_gender', CustomMappingTransformer('Gender', {'Male': 0, 'Female': 1})),
