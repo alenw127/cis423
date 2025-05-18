@@ -10,7 +10,9 @@ from sklearn.impute import KNNImputer
 from sklearn.neighbors import KNeighborsClassifier 
 from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
+from sklearn.linear_model import LogisticRegressionCV
 from sklearn import set_config
+import matplotlib.pyplot as plt
 set_config(transform_output="pandas")  #forces built-in transformers to output df
 
 titanic_variance_based_split = 107   #add to your library
@@ -899,3 +901,55 @@ def customer_setup(customer_table, transformer=customer_transformer, rs=customer
 
 def titanic_setup(titanic_table, transformer=titanic_transformer, rs=titanic_variance_based_split, ts=.2):
   return dataset_setup(titanic_table, 'Survived', transformer, rs, ts)
+
+def threshold_results(thresh_list, actuals, predicted):
+  result_df = pd.DataFrame(columns=['threshold', 'precision', 'recall', 'f1', 'accuracy', 'auc'])
+  for t in thresh_list:
+    yhat = [1 if v >=t else 0 for v in predicted]
+    #note: where TP=0, the Precision and Recall both become 0. And I am saying return 0 in that case.
+    precision = precision_score(actuals, yhat, zero_division=0)
+    recall = recall_score(actuals, yhat, zero_division=0)
+    f1 = f1_score(actuals, yhat)
+    accuracy = accuracy_score(actuals, yhat)
+    auc = roc_auc_score(actuals, predicted)
+    result_df.loc[len(result_df)] = {'threshold':t, 'precision':precision, 'recall':recall, 'f1':f1, 'accuracy':accuracy, 'auc': auc}
+
+  result_df = result_df.round(2)
+  
+  headers = {
+    "selector": "th:not(.index_name)",
+    "props": "background-color: #800000; color: white; text-align: center"
+  }
+  properties = {"border": "1px solid black", "width": "65px", "text-align": "center"}
+
+  fancy_df = result_df.style.highlight_max(color = 'pink', axis = 0).format(precision=2).set_properties(**properties).set_table_styles([headers])
+
+  return result_df, fancy_df
+
+def heat_map(zipped, label_list=(0,1)):
+  zlist = list(zipped)
+  n = len(label_list)
+  case_list = []
+  for i in range(n):
+    inner_list = []
+    for j in range(n):
+      inner_list.append(zlist.count((label_list[i], label_list[j])))
+    case_list.append(inner_list)
+
+  fig, ax = plt.subplots(figsize=(5, 5))
+  ax.imshow(case_list)
+  ax.grid(False)
+  title = ''
+  for i,c in enumerate(label_list):
+    title += f'{i}={c} '
+  ax.set_title(title)
+  ax.set_xlabel('Predicted outputs', fontsize=16, color='black')
+  ax.set_ylabel('Actual outputs', fontsize=16, color='black')
+  ax.xaxis.set(ticks=range(n))
+  ax.yaxis.set(ticks=range(n))
+
+  for i in range(n):
+      for j in range(n):
+          ax.text(j, i, case_list[i][j], ha='center', va='center', color='white', fontsize=32)
+  plt.show()
+  return None
