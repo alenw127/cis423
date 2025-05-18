@@ -13,6 +13,12 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import f1_score
 from sklearn.linear_model import LogisticRegressionCV
 from sklearn import set_config
+from sklearn.experimental import enable_halving_search_cv
+from sklearn.model_selection import HalvingGridSearchCV
+from sklearn.svm import SVC
+from sklearn.model_selection import ParameterGrid
+from joblib import dump
+from joblib import load
 import matplotlib.pyplot as plt
 set_config(transform_output="pandas")  #forces built-in transformers to output df
 
@@ -954,3 +960,29 @@ def heat_map(zipped, label_list=(0,1)):
           ax.text(j, i, case_list[i][j], ha='center', va='center', color='white', fontsize=32)
   plt.show()
   return None
+
+def halving_search(model, grid, x_train, y_train, factor=2, min_resources="exhaust", scoring='roc_auc'):
+  #your code below
+  halving_cv = HalvingGridSearchCV(
+    model, grid,  #our model and the parameter combos we want to try
+    scoring = scoring,  #from chapter 10
+    n_jobs=-1,  #use all available cpus
+    min_resources = min_resources,  #"exhaust" sets this to 20, which is non-optimal. Possible bug in algorithm. See https://github.com/scikit-learn/scikit-learn/issues/27422.
+    factor = factor,  #double samples and take top half of combos on each iteration
+    cv=5, random_state=1234,
+    refit=True,  #remembers the best combo and gives us back that model already trained and ready for testing
+  )
+  grid_result = halving_cv.fit(x_train, y_train)
+  return grid_result
+
+def sort_grid(grid):
+  sorted_grid = grid.copy()
+
+  #sort values - note that this will expand range for you
+  for k,v in sorted_grid.items():
+    sorted_grid[k] = sorted(sorted_grid[k], key=lambda x: (x is None, x))  #handles cases where None is an alternative value
+
+  #sort keys
+  sorted_grid = dict(sorted(sorted_grid.items()))
+
+  return sorted_grid
