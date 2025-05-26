@@ -961,7 +961,7 @@ def heat_map(zipped, label_list=(0,1)):
   plt.show()
   return None
 
-def halving_search(model, grid, x_train, y_train, factor=2, min_resources="exhaust", scoring='roc_auc'):
+def halving_search(model, grid, x_train, y_train, factor=3, min_resources="exhaust", scoring='roc_auc'):
   #your code below
   halving_cv = HalvingGridSearchCV(
     model, grid,  #our model and the parameter combos we want to try
