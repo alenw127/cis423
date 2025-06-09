@@ -211,23 +211,68 @@ class CustomRenamingTransformer(BaseEstimator, TransformerMixin):
     return X_renamed
 
 class CustomOHETransformer(BaseEstimator, TransformerMixin):
-  def __init__(self, target_column:str) -> None:
-    self.target_column = target_column
-
-  def fit(self, X: pd.DataFrame, y: Optional[pd.series] = None):
     """
-    Fit method - performs no actual fitting operation.
+    A transformer that one-hot encodes a single column using pd.get_dummies.
+
+    Parameters
+    ----------
+    target_column : str
+        The name of the column to one-hot encode.
+
+    Attributes
+    ----------
+    target_column : str
+        The column that will be encoded.
     """
-    return self
 
-  def transform(self, X: pd.DataFrame) -> pd.DataFrame:
-    assert self.target_column in X.columns, f"CustomOHETransformer.transform unknown column {self.target_column}"
-    X_ = pd.get_dummies(X, columns=[self.target_column], prefix=self.target_column, prefix_sep='_', dummy_na=False, drop_first=False, dtype=int)
-    return X_
+    def __init__(self, target_column: str) -> None:
+        assert isinstance(target_column, str), f'{self.__class__.__name__} expected a string for target_column but got {type(target_column)} instead.'
+        self.target_column = target_column
 
-  def fit_transform(self, X: pd.DataFrame, y: Optional[pd.series] = None) -> pd.DataFrame:
-    #self.fit(X,y)  #commented out to avoid warning message in fit
-    return self.transform(X)
+
+    def fit(self, X: pd.DataFrame, y: Optional[Iterable] = None) -> 'CustomOHETransformer':
+        """
+        Fit method - does nothing.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            Input data.
+        y : Ignored
+
+        Returns
+        -------
+        self : CustomOHETransformer
+            Returns self for chaining.
+        """
+        print(f"\nWarning: {self.__class__.__name__}.fit does nothing.\n")
+        return self
+
+    def transform(self, X: pd.DataFrame) -> pd.DataFrame:
+        """
+        Apply one-hot encoding to the target column.
+
+        Parameters
+        ----------
+        X : pd.DataFrame
+            The input DataFrame.
+
+        Returns
+        -------
+        pd.DataFrame
+            A new DataFrame with one-hot encoded columns.
+        """
+        assert isinstance(X, pd.DataFrame), f'{self.__class__.__name__}.transform expected DataFrame but got {type(X)} instead.'
+        assert self.target_column in X.columns, f'{self.__class__.__name__}.transform unknown column {self.target_column}'
+
+        dummies = pd.get_dummies(X[self.target_column],
+                                  prefix=self.target_column,
+                                  prefix_sep='_',
+                                  drop_first=False,
+                                  dtype=int)
+
+        X_ = X.drop(columns=[self.target_column]).copy()
+        return pd.concat([X_, dummies], axis=1)
 
 class CustomDropColumnsTransformer(BaseEstimator, TransformerMixin):
     """
