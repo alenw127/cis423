@@ -3,7 +3,7 @@
 ## Pipeline Overview
 This pipeline preprocesses the Titanic dataset to prepare it for machine learning modeling. It handles categorical encoding, target encoding, outlier detection and treatment, feature scaling, and missing value imputation.
 
-![Pipeline](../screenshot/pipeline.png)
+(../screenshot/pipeline.png)
 
 <img src="https://github.com/alenw127/cis423/blob/main/final/screenshot/pipeline.PNG" width="70%" alt="Pipeline Diagram">
 
