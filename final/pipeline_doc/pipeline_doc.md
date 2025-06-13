@@ -80,12 +80,6 @@ This pipeline preprocesses the Titanic dataset to prepare it for machine learnin
 5. Scaling ensures features are comparable and appropriate for distance-based imputation.
 6. KNN imputation uses the fully preprocessed data to fill missing values with contextual accuracy.
 
-## Performance Considerations
-- RobustScaler: Handles potential remaining outliers better than StandardScaler.
-- Target Encoding: Uses smoothing to avoid overfitting from small category sizes.
-- Tukey Method: Outer fences preserve the majority of legitimate data while flagging extreme outliers.
-- KNN Imputation: Maintains relationships between features, particularly important in a health-related dataset where features may be interdependent.
-
 ## Random State
 
 The value used in train_test_split is: 
